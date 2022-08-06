@@ -17,13 +17,28 @@ async function run(){
 try{
 await client.connect();
 const courseCollection = client.db('techokids').collection('courses');
+const enrollCollection = client.db('techokids').collection('enrolls')
+
 
 app.get('/course', async(req, res) => {
     const query = {};
     const cursor = courseCollection.find(query);
     const services = await cursor.toArray();
     res.send(services);
+});
+
+
+app.post('/enroll', async(req, res) => {
+    const enroll = req.body;
+    const query = {courseName: enroll.courseName, date: enroll.date, student: enroll.student}
+    const exists = await enrollCollection.findOne(query);
+    if(exists){
+        return res.send({success: false, enroll: exists})
+    }
+    const result = await enrollCollection.insertOne(enroll);
+    return res.send({success: true, result});
 })
+
 
 }
 finally{
