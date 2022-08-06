@@ -37,6 +37,19 @@ app.post('/enroll', async(req, res) => {
     }
     const result = await enrollCollection.insertOne(enroll);
     return res.send({success: true, result});
+});
+
+app.get('/available', async(req, res) => {
+    const date = req.query.date ;
+    const courses = await courseCollection.find().toArray();
+    const query = {date: date};
+    const enrolls = await enrollCollection.find(query).toArray();
+    courses.forEach(course => {
+        const courseEnrolls = enrolls.filter( book => book.courseName === course.name);
+        const enrolledslots = courseEnrolls.map(book => book.slot);
+        const available = course.slots.filter(slot => !enrolledslots.includes(slot));
+        course.slots = available;
+    })
 })
 
 
