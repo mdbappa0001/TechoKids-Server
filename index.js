@@ -18,7 +18,12 @@ try{
 await client.connect();
 const courseCollection = client.db('techokids').collection('courses');
 
-
+app.get('/course', async(req, res) => {
+    const query = {};
+    const cursor = courseCollection.find(query);
+    const services = await cursor.toArray();
+    res.send(services);
+})
 
 }
 finally{
