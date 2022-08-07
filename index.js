@@ -16,8 +16,10 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
 try{
 await client.connect();
+
 const courseCollection = client.db('techokids').collection('courses');
-const enrollCollection = client.db('techokids').collection('enrolls')
+const enrollCollection = client.db('techokids').collection('enrolls');
+const teacherCollection = client.db('techokids').collection('teachers');
 
 
 app.get('/course', async(req, res) => {
@@ -26,6 +28,18 @@ app.get('/course', async(req, res) => {
     const services = await cursor.toArray();
     res.send(services);
 });
+
+app.get('/enroll', async(req, res) => {
+    const enrolls = await enrollCollection.find().toArray();
+    res.send(enrolls);
+})
+
+app.get('/enroll', async(req, res) => {
+    const student = req.query.student;
+    const query = {student: student};
+    const enrolls = await enrollCollection.find(query).toArray();
+    res.send(enrolls);
+})
 
 
 app.post('/enroll', async(req, res) => {
@@ -38,6 +52,14 @@ app.post('/enroll', async(req, res) => {
     const result = await enrollCollection.insertOne(enroll);
     return res.send({success: true, result});
 });
+
+
+app.post('/teacher', async(req, res) => {
+  const teacher = req.body;
+  const result = await teacherCollection.insertOne(teacher);
+  res.send(result);
+});
+
 
 app.get('/available', async(req, res) => {
     const date = req.query.date ;
