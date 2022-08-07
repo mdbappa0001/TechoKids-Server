@@ -29,10 +29,13 @@ app.get('/course', async(req, res) => {
     res.send(services);
 });
 
+
+
 app.get('/course', async(req, res) => {
     const courses = await courseCollection.find().toArray();
     res.send(courses);
 })
+
 
 app.get('/enroll', async(req, res) => {
     const student = req.query.student;
@@ -54,6 +57,7 @@ app.post('/enroll', async(req, res) => {
     return res.send({success: true, result});
 });
 
+
 app.put('/user/:email', async (req, res) => {
     const email = req.params.email;
     const user = req.body;
@@ -65,6 +69,7 @@ app.put('/user/:email', async (req, res) => {
     const result = await userCollection.updateOne(filter, updateDoc, options);
     res.send(result);
 });
+
 
 app.get('/user', async(req, res) => {
     const users = await userCollection.find().toArray();
