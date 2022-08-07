@@ -19,7 +19,7 @@ await client.connect();
 
 const courseCollection = client.db('techokids').collection('courses');
 const enrollCollection = client.db('techokids').collection('enrolls');
-const teacherCollection = client.db('techokids').collection('teachers');
+const userCollection = client.db('techokids').collection('users');
 
 
 app.get('/course', async(req, res) => {
@@ -29,9 +29,9 @@ app.get('/course', async(req, res) => {
     res.send(services);
 });
 
-app.get('/enroll', async(req, res) => {
-    const enrolls = await enrollCollection.find().toArray();
-    res.send(enrolls);
+app.get('/course', async(req, res) => {
+    const courses = await courseCollection.find().toArray();
+    res.send(courses);
 })
 
 app.get('/enroll', async(req, res) => {
@@ -40,6 +40,7 @@ app.get('/enroll', async(req, res) => {
     const enrolls = await enrollCollection.find(query).toArray();
     res.send(enrolls);
 })
+
 
 
 app.post('/enroll', async(req, res) => {
@@ -53,12 +54,23 @@ app.post('/enroll', async(req, res) => {
     return res.send({success: true, result});
 });
 
-
-app.post('/teacher', async(req, res) => {
-  const teacher = req.body;
-  const result = await teacherCollection.insertOne(teacher);
-  res.send(result);
+app.put('/user/:email', async (req, res) => {
+    const email = req.params.email;
+    const user = req.body;
+    const filter = { email: email };
+    const options = { upsert: true };
+    const updateDoc = {
+        $set: user,
+    };
+    const result = await userCollection.updateOne(filter, updateDoc, options);
+    res.send(result);
 });
+
+app.get('/user', async(req, res) => {
+    const users = await userCollection.find().toArray();
+    res.send(users);
+})
+
 
 
 app.get('/available', async(req, res) => {
